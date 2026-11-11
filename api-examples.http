@@ -1,0 +1,92 @@
+### Variables
+@base = http://localhost:8080/api
+
+### 1. Register a patient
+POST {{base}}/patients
+Content-Type: application/json
+
+{
+  "firstName": "Anita",
+  "lastName": "Sharma",
+  "mobile": "9876543210",
+  "dateOfBirth": "1990-01-15",
+  "gender": "FEMALE"
+}
+
+### 2. Register another patient (for queue ordering demos)
+POST {{base}}/patients
+Content-Type: application/json
+
+{
+  "firstName": "Ravi",
+  "lastName": "Kumar",
+  "mobile": "9123456780",
+  "dateOfBirth": "1985-06-20",
+  "gender": "MALE"
+}
+
+### 3. Duplicate mobile -> 409
+POST {{base}}/patients
+Content-Type: application/json
+
+{
+  "firstName": "Anita",
+  "lastName": "Sharma",
+  "mobile": "9876543210",
+  "dateOfBirth": "1990-01-15",
+  "gender": "FEMALE"
+}
+
+### 4. Validation failure -> 400 (bad mobile + future DOB)
+POST {{base}}/patients
+Content-Type: application/json
+
+{
+  "firstName": "Bad",
+  "lastName": "Data",
+  "mobile": "12345",
+  "dateOfBirth": "2099-01-01",
+  "gender": "OTHER"
+}
+
+### 5. Search patients
+GET {{base}}/patients?search=anita
+
+### 6. List all patients (empty search)
+GET {{base}}/patients
+
+### 7. Add patient to queue (ROUTINE) — replace patientId
+POST {{base}}/visits
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "priority": "ROUTINE"
+}
+
+### 8. Add second patient as URGENT — replace patientId
+POST {{base}}/visits
+Content-Type: application/json
+
+{
+  "patientId": 2,
+  "priority": "URGENT"
+}
+
+### 9. Second WAITING visit for same patient -> 409
+POST {{base}}/visits
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "priority": "ROUTINE"
+}
+
+### 10. View waiting queue (URGENT first, then oldest)
+GET {{base}}/queue
+
+### 11. Complete a visit — replace id
+PATCH {{base}}/visits/1/complete
+
+### 12. Complete again -> 409
+PATCH {{base}}/visits/1/complete

@@ -1,0 +1,357 @@
+.page {
+  animation: rise-in 0.35s ease both;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal-800);
+}
+
+.page-header h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.2vw, 2.15rem);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.page-header p {
+  margin: 0 0 1.1rem;
+  color: var(--muted);
+  max-width: 36rem;
+}
+
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+  padding: 0;
+  margin: 0 0 1.15rem;
+}
+
+.steps li {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 0.55rem 0.4rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 55%);
+  border: 1px solid var(--line);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.steps li.active {
+  color: var(--teal-900);
+  background: var(--teal-100);
+  border-color: color-mix(in srgb, var(--teal-600) 35%, white);
+}
+
+.steps li.done {
+  color: var(--success-ink);
+  background: var(--success-bg);
+  border-color: color-mix(in srgb, var(--success-ink) 20%, white);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+  animation: rise-in 0.3s ease both;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.gender-field {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gender-field legend {
+  padding: 0;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.field input,
+.field select {
+  font: inherit;
+  font-weight: 500;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 0.55rem;
+  padding: 0.7rem 0.8rem;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--teal-600);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal-600) 22%, white);
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choice {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink-soft);
+  border-radius: 0.55rem;
+  padding: 0.65rem 0.9rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.choice:hover {
+  border-color: var(--teal-600);
+  color: var(--teal-900);
+}
+
+.choice.selected {
+  background: var(--teal-100);
+  border-color: var(--teal-600);
+  color: var(--teal-900);
+}
+
+.choice.urgent-choice.selected {
+  background: color-mix(in srgb, var(--urgent) 14%, white);
+  border-color: var(--urgent);
+  color: var(--urgent-ink);
+}
+
+.choice:active {
+  transform: translateY(1px);
+}
+
+.hint {
+  color: var(--danger);
+  font-weight: 500;
+  font-size: 0.8rem;
+  min-height: 1.1em;
+}
+
+.actions {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.actions.split {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.primary,
+.ghost,
+.link-btn {
+  appearance: none;
+  border: none;
+  border-radius: 0.55rem;
+  padding: 0.75rem 1.15rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.primary {
+  color: #fff;
+  background: linear-gradient(180deg, var(--teal-600), var(--teal-800));
+}
+
+.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ghost,
+.link-btn {
+  background: transparent;
+  color: var(--teal-800);
+  border: 1px solid var(--line-strong);
+}
+
+.banner {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.65rem;
+  font-size: 0.95rem;
+  animation: rise-in 0.25s ease both;
+}
+
+.banner.error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 22%, white);
+}
+
+.mr-card {
+  padding: 1rem 1.05rem;
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--teal-50) 80%, white), #fff);
+  border: 1px solid var(--teal-100);
+  margin-bottom: 1.1rem;
+}
+
+.mr-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-800);
+}
+
+.mr-value {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.mr-name {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.enqueue-block h2,
+.done-panel h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.muted {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+}
+
+.priority-row {
+  margin-bottom: 1rem;
+}
+
+.done-panel {
+  text-align: center;
+}
+
+.done-panel p {
+  color: var(--ink-soft);
+  max-width: 28rem;
+  margin: 0 auto 1.2rem;
+}
+
+.done-mark {
+  width: 3rem;
+  height: 3rem;
+  margin: 0.2rem auto 0.9rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #fff 0 18%, transparent 19%),
+    linear-gradient(145deg, var(--teal-600), var(--teal-800));
+  box-shadow: 0 8px 20px rgb(20 90 85 / 25%);
+  animation: pop-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.done-panel .actions {
+  justify-content: center;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-full {
+    grid-column: auto;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .actions,
+  .actions.split {
+    flex-direction: column-reverse;
+  }
+
+  .primary,
+  .ghost,
+  .link-btn {
+    width: 100%;
+  }
+
+  .choice {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}

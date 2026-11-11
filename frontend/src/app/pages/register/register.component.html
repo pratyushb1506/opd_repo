@@ -1,0 +1,129 @@
+<section class="page">
+  <header class="page-header">
+    <p class="eyebrow">Front desk</p>
+    <h1>Register patient</h1>
+    <p>Capture demographics, issue an MR number, then seat them in today’s queue.</p>
+  </header>
+
+  <ol class="steps" aria-label="Registration flow">
+    <li [class.active]="step === 'form'" [class.done]="step !== 'form'">1 · Details</li>
+    <li [class.active]="step === 'enqueue'" [class.done]="step === 'done'">2 · Queue</li>
+    <li [class.active]="step === 'done'">3 · Done</li>
+  </ol>
+
+  <!-- Step 1: form -->
+  <div class="panel form-panel" *ngIf="step === 'form'">
+    <div *ngIf="formError" class="banner error" role="alert">{{ formError }}</div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="grid">
+        <label class="field">
+          <span>First name</span>
+          <input type="text" formControlName="firstName" autocomplete="given-name" maxlength="50" />
+          <small class="hint" *ngIf="fieldError('firstName')">{{ fieldError('firstName') }}</small>
+        </label>
+
+        <label class="field">
+          <span>Last name</span>
+          <input type="text" formControlName="lastName" autocomplete="family-name" maxlength="50" />
+          <small class="hint" *ngIf="fieldError('lastName')">{{ fieldError('lastName') }}</small>
+        </label>
+
+        <label class="field">
+          <span>Mobile</span>
+          <input type="tel" formControlName="mobile" inputmode="numeric" maxlength="10" autocomplete="tel" />
+          <small class="hint" *ngIf="fieldError('mobile')">{{ fieldError('mobile') }}</small>
+        </label>
+
+        <label class="field">
+          <span>Date of birth</span>
+          <input type="date" formControlName="dateOfBirth" />
+          <small class="hint" *ngIf="fieldError('dateOfBirth')">{{ fieldError('dateOfBirth') }}</small>
+        </label>
+
+        <fieldset class="field field-full gender-field">
+          <legend>Gender</legend>
+          <div class="choice-row" role="radiogroup" aria-label="Gender">
+            <button
+              type="button"
+              class="choice"
+              *ngFor="let g of genders"
+              [class.selected]="form.controls.gender.value === g"
+              (click)="form.controls.gender.setValue(g); form.controls.gender.markAsDirty(); form.controls.gender.markAsTouched()"
+            >
+              {{ g }}
+            </button>
+          </div>
+          <small class="hint" *ngIf="fieldError('gender')">{{ fieldError('gender') }}</small>
+        </fieldset>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="primary" [disabled]="form.invalid || submitting">
+          {{ submitting ? 'Saving…' : 'Continue' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 2: add to queue -->
+  <div class="panel next-panel" *ngIf="step === 'enqueue' && registered">
+    <div class="mr-card">
+      <span class="mr-label">MR number issued</span>
+      <strong class="mr-value">{{ registered.mrNumber }}</strong>
+      <p class="mr-name">{{ registered.firstName }} {{ registered.lastName }} · {{ registered.mobile }}</p>
+    </div>
+
+    <div class="enqueue-block">
+      <h2>Add to today’s queue?</h2>
+      <p class="muted">Choose priority, then confirm. You can also skip and register the next patient.</p>
+
+      <div class="choice-row priority-row" role="radiogroup" aria-label="Visit priority">
+        <button
+          type="button"
+          class="choice"
+          [class.selected]="selectedPriority === 'ROUTINE'"
+          (click)="setPriority('ROUTINE')"
+        >
+          Routine
+        </button>
+        <button
+          type="button"
+          class="choice urgent-choice"
+          [class.selected]="selectedPriority === 'URGENT'"
+          (click)="setPriority('URGENT')"
+        >
+          Urgent
+        </button>
+      </div>
+
+      <div *ngIf="enqueueError" class="banner error" role="alert">{{ enqueueError }}</div>
+
+      <div class="actions split">
+        <button type="button" class="ghost" (click)="skipQueue()" [disabled]="enqueueing">
+          Skip for now
+        </button>
+        <button type="button" class="primary" (click)="addToQueueNow()" [disabled]="enqueueing">
+          {{ enqueueing ? 'Adding…' : 'Add to queue' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: done -->
+  <div class="panel done-panel" *ngIf="step === 'done' && registered">
+    <div class="done-mark" aria-hidden="true"></div>
+    <h2>Ready for the next patient</h2>
+    <p>
+      <strong>{{ registered.firstName }} {{ registered.lastName }}</strong>
+      is registered as <strong>{{ registered.mrNumber }}</strong>.
+      <span *ngIf="queuedSuccessfully"> They are in the waiting queue.</span>
+      <span *ngIf="!queuedSuccessfully && !enqueueError"> Not added to the queue yet.</span>
+      <span *ngIf="enqueueError"> Queue note: {{ enqueueError }}.</span>
+    </p>
+    <div class="actions split">
+      <a routerLink="/queue" class="ghost link-btn">Open queue board</a>
+      <button type="button" class="primary" (click)="registerAnother()">Register another</button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,155 @@
+<section class="page">
+  <header class="page-header">
+    <p class="eyebrow">Live board</p>
+    <h1>Waiting queue</h1>
+    <p>Search as you type, set priority, and clear visits as patients are seen.</p>
+  </header>
+
+  <div class="stats" *ngIf="queue.length || loadingQueue">
+    <div class="stat">
+      <span class="stat-label">Waiting</span>
+      <strong>{{ queue.length }}</strong>
+    </div>
+    <div class="stat urgent-stat">
+      <span class="stat-label">Urgent</span>
+      <strong>{{ urgentCount() }}</strong>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Auto-refresh</span>
+      <strong class="soft">20s</strong>
+    </div>
+  </div>
+
+  <div *ngIf="actionMessage" class="banner success" role="status">{{ actionMessage }}</div>
+  <div *ngIf="actionError" class="banner error" role="alert">{{ actionError }}</div>
+  <div *ngIf="searchError" class="banner error" role="alert">{{ searchError }}</div>
+
+  <section class="panel search-panel" aria-labelledby="search-heading">
+    <div class="panel-head">
+      <h2 id="search-heading">Find patient</h2>
+      <span class="hint-inline" *ngIf="searching">Searching…</span>
+    </div>
+
+    <div class="search-row">
+      <label class="sr-only" for="patient-search">Search by name or mobile</label>
+      <input
+        id="patient-search"
+        type="search"
+        name="search"
+        [ngModel]="search"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Start typing a name or mobile"
+        autocomplete="off"
+      />
+      <button type="button" (click)="runSearch()" [disabled]="searching">
+        Search
+      </button>
+    </div>
+
+    <div class="results" *ngIf="results.length; else noResults">
+      <article class="result" *ngFor="let p of results">
+        <div class="result-main">
+          <strong>{{ p.firstName }} {{ p.lastName }}</strong>
+          <span>{{ p.mrNumber }} · {{ p.mobile }}</span>
+        </div>
+        <div class="result-actions">
+          <div class="choice-row compact" role="radiogroup" [attr.aria-label]="'Priority for ' + p.firstName">
+            <button
+              type="button"
+              class="choice"
+              [class.selected]="priorities[p.id] === 'ROUTINE'"
+              (click)="setPriority(p.id, 'ROUTINE')"
+            >
+              Routine
+            </button>
+            <button
+              type="button"
+              class="choice urgent-choice"
+              [class.selected]="priorities[p.id] === 'URGENT'"
+              (click)="setPriority(p.id, 'URGENT')"
+            >
+              Urgent
+            </button>
+          </div>
+          <button
+            type="button"
+            class="secondary"
+            (click)="addToQueue(p)"
+            [disabled]="addingIds.has(p.id)"
+          >
+            {{ addingIds.has(p.id) ? 'Adding…' : 'Add' }}
+          </button>
+        </div>
+      </article>
+    </div>
+    <ng-template #noResults>
+      <p class="empty" *ngIf="!searching && !searched">
+        Type a name or mobile — results appear as you type.
+      </p>
+      <p class="empty" *ngIf="!searching && searched">No patients matched that search.</p>
+    </ng-template>
+  </section>
+
+  <section class="panel queue-panel" aria-labelledby="queue-heading">
+    <div class="panel-head">
+      <h2 id="queue-heading">Now waiting</h2>
+      <button type="button" class="ghost" (click)="refreshQueue()" [disabled]="loadingQueue">
+        {{ loadingQueue ? 'Refreshing…' : 'Refresh' }}
+      </button>
+    </div>
+
+    <div class="table-wrap" *ngIf="queue.length; else emptyQueue">
+      <table>
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Age</th>
+            <th>Priority</th>
+            <th>Waiting</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of queue"
+            [class.urgent]="item.priority === 'URGENT'"
+            [class.flash]="flashIds.has(item.visitId)"
+            [class.leaving]="completingIds.has(item.visitId)"
+          >
+            <td data-label="Patient">
+              <div class="person">
+                <strong>{{ item.patientName }}</strong>
+                <span>{{ item.mrNumber }}</span>
+              </div>
+            </td>
+            <td data-label="Age">{{ item.ageInYears }}</td>
+            <td data-label="Priority">
+              <span class="prio" [class.urgent-tag]="item.priority === 'URGENT'">{{ item.priority }}</span>
+            </td>
+            <td data-label="Waiting">
+              <span class="wait" [title]="item.waitingSince | date: 'medium'">
+                {{ waitingLabel(item.waitingSince) }}
+              </span>
+            </td>
+            <td data-label="">
+              <button
+                type="button"
+                class="complete"
+                (click)="complete(item)"
+                [disabled]="completingIds.has(item.visitId)"
+              >
+                {{ completingIds.has(item.visitId) ? '…' : 'Complete' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #emptyQueue>
+      <div class="empty-board">
+        <p>{{ loadingQueue ? 'Loading queue…' : 'No patients waiting right now.' }}</p>
+        <p class="empty-hint" *ngIf="!loadingQueue">Register a patient, or search above to add someone.</p>
+      </div>
+    </ng-template>
+  </section>
+</section>
